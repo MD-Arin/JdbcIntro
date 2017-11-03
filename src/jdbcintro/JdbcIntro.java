@@ -12,46 +12,50 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import tables.States;
+import tables.Tours;
 
 public class JdbcIntro {
-    
+
     private static final Logger IntroLog = Logger.getLogger(JdbcIntro.class.getName());
 
     public static void main(String[] args) throws SQLException {
-        
-        Connection conn = null;
-        Statement stmt = null;
-        ResultSet rs = null;
-        
-        
-        try {
+
+//        Tours
+        try (
+                Connection conn = DBUtil.getConnection(DBType.MYSQL);
+                Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+//                ResultSet tourRs = stmt.executeQuery("SELECT * FROM tours;");
+                ResultSet stateRs = stmt.executeQuery("SELECT stateId, stateName FROM states;");) {
+
             // For Java 5(1.5) and below
             // Class.forName("com.mysql.jdbc.Driver");
-            conn = DBUtil.getConnection(DBType.MYSQL);
             IntroLog.log(Level.INFO, "Cennected!");
+
+//            Tours.displayData(tourRs);
             
-            stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            rs = stmt.executeQuery("SELECT * FROM states");
-            rs.last();
-            System.out.println("Number of rows: " + rs.getRow());
+//            Moving the Cursor
+            States.displayData(stateRs);
             
+//            Moving to the last row
+            stateRs.last();
+            System.out.println("Number of Rows: " + stateRs.getRow());
+            
+//            Moving to the first row
+            stateRs.first();
+            System.out.println("The First State is " + stateRs.getString("stateName"));
+            
+//            Moving to the last row
+            stateRs.last();
+            System.out.println("The Last State is " + stateRs.getString("stateName"));
+            
+//            Moving to a specific row
+            stateRs.absolute(10);
+            System.out.println("The 10th State is " + stateRs.getString("stateName"));
+
         } catch (SQLException ex) {
             IntroLog.log(Level.SEVERE, ex.getMessage(), ex);
-        } finally {
-            if(conn != null){
-                conn.close();
-                IntroLog.log(Level.INFO, "Connection Closed!");
-            }
-            if(stmt != null){
-                stmt.close();
-                IntroLog.log(Level.INFO, "Statement Closed!");
-            }
-            if(rs != null){
-                rs.close();
-                IntroLog.log(Level.INFO, "ResultSet Closed!");
-            }
         }
-
     }
 
 }
