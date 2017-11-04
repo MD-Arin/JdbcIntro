@@ -11,6 +11,6 @@ package jdbcintro;
  */
 public enum DBType {
     
-    HSQLDB, MYSQL
+    HSQLDB, MYSQL,ORACLE
     
 }

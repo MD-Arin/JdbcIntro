@@ -1,0 +1,7 @@
+
+.idea/
+/nbproject/
+/build.xml/
+/build/
+/out/
+JdbcIntro.iml
